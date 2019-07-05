@@ -118,12 +118,11 @@ void List::AddNewRecord(string description, float amount) {
 
 		if (listBegin == NULL) { //IF THE LIST IS EMPTY
 			listBegin = newRecord;
-			listEnd = newRecord->GetNextRecordPtr();
 		}
 		else {
 			listEnd->SetNextRecord(newRecord);
-			listEnd = newRecord->GetNextRecordPtr();
 		}
+		listEnd = newRecord;
 
 		SetRecordsID(); //ID's ARE GIVEN TO THE RECORDS
 		size++;
