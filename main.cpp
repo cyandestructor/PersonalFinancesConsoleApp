@@ -9,12 +9,15 @@ using namespace std;
 //FUNCTION PROTOTYPES
 void ShowViewMenu();
 void ShowManageMenu();
-void EditList();
+void EditList(Index* index);
+void EditListName(List* list);
 void AddRecord(List* list);
 void EditRecord(List* list);
+void EditRecordDescrp(Record* record);
+void EditRecordAmount(Record* record);
 void DeleteRecord(List* list);
-void AddList();
-void DeleteList();
+void AddList(Index* index);
+void DeleteList(Index* index);
 
 typedef Index* INDEX_PTR;
 
@@ -23,11 +26,13 @@ INDEX_PTR mainIndex = new Index();	//mainIndex IS CREATED
 void main() {
 
 	mainIndex->ListPush("Incomes");		//"INCOMES" AND...
-	mainIndex->ListPush("Expenses");	//... "EXPENSES" BASIC LISTS ARE CREATED AND ADDED
+	mainIndex->ListPush("Expenses");	//... "EXPENSES" DEFAULT LISTS ARE CREATED AND ADDED
 
 	char option;
 
 	do {
+
+		//MAIN MENU
 
 		option = '0';
 
@@ -119,13 +124,13 @@ void ShowManageMenu() {
 
 		switch (option) {
 		case '1':
-			AddList();
+			AddList(mainIndex);
 			break;
 		case '2':
-			EditList();
+			EditList(mainIndex);
 			break;
 		case '3':
-			DeleteList();
+			DeleteList(mainIndex);
 			break;
 		case '4':
 			break;
@@ -138,7 +143,7 @@ void ShowManageMenu() {
 
 }
 
-void EditList() {
+void EditList(Index* index) {
 
 	char id, option;
 	int ID;
@@ -152,14 +157,14 @@ void EditList() {
 
 		cout << "Edit Menu" << endl << endl
 			<< "What list you want to edit?" << endl;
-		mainIndex->PrintIndex();
+		index->PrintIndex();
 
-		if (mainIndex != NULL) { //IF mainIndex IS NOT EMPTY
+		if (index != NULL) { //IF index IS NOT EMPTY
 			cout << "?- ";
 			cin >> id; //USER CHOICE IS ENTERED
 			ID = id - '0'; //CONVERSION TO INTEGER
 
-			listAuxPtr = mainIndex->GetListByID(ID);
+			listAuxPtr = index->GetListByID(ID);
 
 			if (listAuxPtr != NULL) {
 				
@@ -169,7 +174,8 @@ void EditList() {
 					<< "1) Add a record" << endl
 					<< "2) Delete a record" << endl
 					<< "3) Edit a record" << endl
-					<< "4) Cancel" << endl
+					<< "4) Edit list name" << endl
+					<< "5) Cancel" << endl
 					<< "?- ";
 				cin >> option;
 
@@ -184,6 +190,9 @@ void EditList() {
 					EditRecord(listAuxPtr);
 					break;
 				case '4':
+					EditListName(listAuxPtr);
+					break;
+				case '5':
 					break;
 				default:
 					cout << "Error. Invalid option." << endl;
@@ -217,6 +226,7 @@ void AddRecord(List* list) {
 	cin >> auxAmount;
 
 	list->AddNewRecord(auxDescription, auxAmount);
+	system("pause");
 
 }
 
@@ -258,8 +268,10 @@ void EditRecord(List* list) {
 
 					switch (option) {
 					case '1':
+						EditRecordDescrp(recordAuxPtr);
 						break;
 					case '2':
+						EditRecordAmount(recordAuxPtr);
 						break;
 					case '3':
 						break;
@@ -279,13 +291,50 @@ void EditRecord(List* list) {
 	}
 	else {
 		cout << "The list is empty." << endl;
+		system("pause");
 	}
+
+}
+
+void EditRecordDescrp(Record* record) {
+
+	cin.ignore();
+
+	system("cls");
+
+	cout << "Enter the new record description" << endl
+		<< "?.-";
+	string description;
+	getline(cin, description);
+
+	record->SetDescription(description);
+
+	cout << "Description updated successfully" << endl;
+	system("pause");
+
+}
+
+void EditRecordAmount(Record* record) {
+
+	cin.ignore();
+
+	system("cls");
+
+	cout << "Enter the new amount" << endl
+		<< "?.-";
+	float amount;
+	cin >> amount;
+
+	record->SetAmount(amount);
+
+	cout << "Amount updated successfully" << endl;
+	system("pause");
 
 }
 
 void DeleteRecord(List* list) {
 
-	if (list->GetSize() > 0) {
+	if (list->GetSize() > 0) { //IF LIST IS NOT EMPTY
 
 		char id;
 		int ID;
@@ -315,9 +364,11 @@ void DeleteRecord(List* list) {
 		cout << "The list is empty." << endl;
 	}
 
+	system("pause");
+
 }
 
-void AddList() {
+void AddList(Index* index) {
 
 	cin.ignore(); //clear buffer
 
@@ -329,14 +380,14 @@ void AddList() {
 		<< "?- ";
 	getline(cin, nameAux);
 
-	mainIndex->ListPush(nameAux);
+	index->ListPush(nameAux);
 
 	cout << "The list " << nameAux << " has been created" << endl;
 	system("pause");
 
 }
 
-void DeleteList(){
+void DeleteList(Index* index){
 
 	char id;
 	int ID;
@@ -349,20 +400,41 @@ void DeleteList(){
 		system("cls");
 
 		cout << "Select the list to be deleted:" << endl << endl;
-		mainIndex->PrintIndex();
+		index->PrintIndex();
 		
-		if (mainIndex->GetIndexTop() != NULL) { //IF mainIndex IS NOT EMPTY
+		if (index->GetIndexTop() != NULL) { //IF mainIndex IS NOT EMPTY
 			cout << "?- ";
 			cin >> id;
 			ID = id - '0'; //CONVERSION TO INTEGER
 
-			listAuxPtr = mainIndex->GetListByID(ID);
+			listAuxPtr = index->GetListByID(ID);
 
-			mainIndex->ListDelete(ID);
+			index->ListDelete(ID);
+			system("pause");
+		}
+		else {
+			system("pause");
+			break; //BREAK THE DO WHILE IF INDEX IS EMPTY
 		}
 
-		system("pause");
-
 	} while (listAuxPtr == NULL); //WHILE INVALID OPTION / LIST DOES NOT EXIST
+
+}
+
+void EditListName(List* list) {
+
+	cin.ignore();
+
+	system("cls");
+
+	cout << "Enter the new name" << endl
+		<< "?.-";
+	string name;
+	getline(cin, name);
+
+	list->SetListName(name);
+
+	cout << "Name updated successfully" << endl;
+	system("pause");
 
 }
